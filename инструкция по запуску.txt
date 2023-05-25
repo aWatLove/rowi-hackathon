@@ -1,0 +1,45 @@
+Инструкция по запуску
+
+1. Поднять сервер авторизации keycloak с postgres с портом 9090
+создать рилм
+создать две роли: client, manager
+создать 5 user: 
+	login/password
+3-х с ролью manager
+-1. manager1/manager1
+-2. manager2/manager2
+-3. manager3/manager3
+
+2-х с ролью client
+-1. client1/client1
+-2. client2/client2
+
+
+2. Создать БД MongoDB 
+Создать коллекции и залить тестовые данные с файла dbdata.js: Client, Manager, User, ClientChat
+
+
+3. Настройка application.properties в Java проекте
+back/src/main/resources/application.properties
+
+		spring.data.mongodb.authentication-database=admin
+		spring.data.mongodb.database=<Название бд>
+		spring.data.mongodb.port=27017
+		spring.data.mongodb.host=localhost
+		server.port=8081
+		keycloak.cors=true
+		enable-cors=true
+		spring.security.oauth2.client.registration.keycloak.client-id=<clientId в keycloak>
+		spring.security.oauth2.client.registration.keycloak.authorization-grant-type=authorization_code
+		spring.security.oauth2.client.registration.keycloak.scope=openid
+		spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:9090/auth/realms/<Название рилма>
+		spring.security.oauth2.client.provider.keycloak.user-name-attribute=preferred_username
+		spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9090/auth/realms/<Название рилма>
+
+
+
+4. Запускаем keycloak, запускаем MongoDB, запускаем /back, запускаем /front
+подключаемся к http://localhost:5173
+для теста /back через postman к http://localhost:8081/api/*
+для получения токена авторизации http://localhost:9090/auth/realms/<название рилма>/protocol/openid-connect/token
+где в параметрах client_id : <clientId в keycloak>
